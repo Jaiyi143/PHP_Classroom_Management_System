@@ -64,5 +64,7 @@ function page(string $title, string $body): void {
     }
     echo '<span class="dashboard-profile-avatar" aria-hidden="true">'.e($profileInitial).'</span><span class="dashboard-profile-copy"><strong>'.e($profileName).'</strong><span>'.e($profileRole).'</span></span>';
     echo (($_SESSION['room_role'] ?? '') === 'admin' ? '</a>' : '</div>').'</div></div>';
-    echo $body.'</main></body></html>';
+    echo $body.'</main>';
+    require __DIR__ . '/AI/room_chat_widget.php';
+    echo '<script src="'.$base.'AI/chat.js?v=2" defer></script></body></html>';
 }

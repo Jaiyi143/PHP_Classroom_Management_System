@@ -15,6 +15,9 @@ function roomAiFaqAnswer(string $question): ?string {
         return trim(preg_replace('/[^\p{L}\p{N}]+/u', ' ', $text) ?? '');
     };
     $question = $normalize($question);
+    if (preg_match('/^(?:(?:hi+|hello|hellow|hey|hiya)(?: there)?|good (?:morning|afternoon|evening))$/u', $question)) {
+        return 'Hello! I can help you find rooms by building, capacity, or current availability. What room are you looking for?';
+    }
     foreach (roomAiFaqs() as $savedQuestion => $answer) {
         if ($question === $normalize($savedQuestion)) return $answer;
     }

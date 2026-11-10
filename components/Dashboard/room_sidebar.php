@@ -17,7 +17,7 @@
             <?php endif; ?>
         </nav>
         <nav class="sidebar-nav sidebar-nav-bottom" aria-label="Account navigation">
-            <a href="<?= $base ?>components/LOGIN/room_logout.php">LOG OUT</a>
+            <a href="<?= $base ?>components/LOGIN/room_logout.php" data-room-chat-logout>LOG OUT</a>
         </nav>
         <p class="sidebar-note">CLASSROOM MANAGEMENT <span aria-hidden="true">◆</span></p>
     </div>
