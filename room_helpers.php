@@ -1,7 +1,9 @@
 <?php
 function roomBasePath(): string {
     $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
-    return str_contains($script, '/components/') ? '../../' : '';
+    if (str_contains($script, '/components/')) return '../../';
+    if (str_contains($script, '/AI/')) return '../';
+    return '';
 }
 function requireLogin(): void {
     if (session_status() !== PHP_SESSION_ACTIVE) {
