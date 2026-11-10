@@ -2,6 +2,7 @@
 require __DIR__ . '/../../room_helpers.php';
 requireLogin();
 require __DIR__ . '/../../room_config.php';
+requireAdminTeacher($pdo);
 
 $currentUserId = positiveId($_SESSION['room_user_id'] ?? null);
 $actorStmt = $pdo->prepare('SELECT username, role, password_sha256 FROM users WHERE user_id = ?');
@@ -11,11 +12,6 @@ if (!$actor) {
     header('Location: ../LOGIN/room_logout.php');
     exit;
 }
-if ($actor['role'] !== 'admin') {
-    http_response_code(403);
-    exit('Only an admin/teacher can add accounts.');
-}
-
 $_SESSION['room_role'] = $actor['role'];
 $_SESSION['room_username'] = $actor['username'];
 $_SESSION['room_account_csrf'] ??= bin2hex(random_bytes(32));
@@ -77,9 +73,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
 ob_start();
 ?>
+<div class="dashboard-editor">
 <p class="account-back"><a href="room_accounts.php">← Back to accounts</a></p>
 <?php if ($error !== ''): ?><p class="error" role="alert"><?= e($error) ?></p><?php endif; ?>
-<div class="account-grid">
+<div class="account-grid account-editor-grid">
     <section class="account-card" aria-labelledby="new-account-title">
         <div class="account-card-heading">
             <div>
@@ -116,5 +113,6 @@ ob_start();
             <button type="submit">Add account</button>
         </form>
     </section>
+</div>
 </div>
 <?php page('Add Account', ob_get_clean());

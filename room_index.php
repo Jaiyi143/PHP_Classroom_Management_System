@@ -66,7 +66,7 @@ $filterUrl = static function (string $status, string $building) use ($search): s
 
 ob_start();
 ?>
-<form class="mb-6 flex flex-wrap items-center gap-3" method="get">
+<form class="dashboard-search" method="get" role="search">
     <?php if ($statusFilter !== ''): ?>
         <input type="hidden" name="status" value="<?= e($statusFilter) ?>">
     <?php endif; ?>
@@ -74,25 +74,39 @@ ob_start();
         <input type="hidden" name="building" value="<?= e($buildingFilter) ?>">
     <?php endif; ?>
     <label class="sr-only" for="room-search">Search rooms</label>
-    <input class="min-w-0 flex-1" id="room-search" name="q" placeholder="Search room or building" value="<?= e($search) ?>">
+    <input id="room-search" name="q" type="search" placeholder="Search room or building" value="<?= e($search) ?>">
     <button type="submit">Search</button>
 </form>
-<p class="room-filter-heading">Status</p>
-<nav class="room-filter-tabs" aria-label="Filter rooms by status">
-    <a class="room-filter-link" href="<?= e($filterUrl('', $buildingFilter)) ?>" <?= $statusFilter === '' ? 'aria-current="page"' : '' ?>>All rooms <span class="room-filter-count"><?= array_sum($counts) ?></span></a>
-    <a class="room-filter-link room-filter-link--vacant" href="<?= e($filterUrl('Vacant', $buildingFilter)) ?>" <?= $statusFilter === 'Vacant' ? 'aria-current="page"' : '' ?>>Vacant <span class="room-filter-count"><?= $counts['Vacant'] ?></span></a>
-    <a class="room-filter-link" href="<?= e($filterUrl('Occupied', $buildingFilter)) ?>" <?= $statusFilter === 'Occupied' ? 'aria-current="page"' : '' ?>>Occupied <span class="room-filter-count"><?= $counts['Occupied'] ?></span></a>
-</nav>
-<p class="room-filter-heading">Building</p>
-<nav class="room-filter-tabs" aria-label="Filter rooms by building">
-    <a class="room-filter-link" href="<?= e($filterUrl($statusFilter, '')) ?>" <?= $buildingFilter === '' ? 'aria-current="page"' : '' ?>>All buildings</a>
-    <?php foreach ($buildingOptions as $building): ?>
-        <a class="room-filter-link" href="<?= e($filterUrl($statusFilter, $building)) ?>" <?= $buildingFilter === $building ? 'aria-current="page"' : '' ?>><?= e($building) ?></a>
-    <?php endforeach; ?>
-</nav>
+<div class="dashboard-summary" aria-label="Room availability summary">
+    <div class="dashboard-summary-card"><span>Total rooms</span><strong><?= array_sum($counts) ?></strong></div>
+    <div class="dashboard-summary-card dashboard-summary-card--vacant"><span>Vacant</span><strong><?= $counts['Vacant'] ?></strong></div>
+    <div class="dashboard-summary-card dashboard-summary-card--occupied"><span>Occupied</span><strong><?= $counts['Occupied'] ?></strong></div>
+</div>
+<section class="dashboard-filters" aria-labelledby="filter-heading">
+    <h2 id="filter-heading">Filter rooms</h2>
+    <div class="dashboard-filter-group">
+        <h3 class="room-filter-heading">Status</h3>
+        <nav class="room-filter-tabs" aria-label="Filter rooms by status">
+            <a class="room-filter-link" href="<?= e($filterUrl('', $buildingFilter)) ?>" <?= $statusFilter === '' ? 'aria-current="page"' : '' ?>>All rooms <span class="room-filter-count"><?= array_sum($counts) ?></span></a>
+            <a class="room-filter-link room-filter-link--vacant" href="<?= e($filterUrl('Vacant', $buildingFilter)) ?>" <?= $statusFilter === 'Vacant' ? 'aria-current="page"' : '' ?>>Vacant <span class="room-filter-count"><?= $counts['Vacant'] ?></span></a>
+            <a class="room-filter-link" href="<?= e($filterUrl('Occupied', $buildingFilter)) ?>" <?= $statusFilter === 'Occupied' ? 'aria-current="page"' : '' ?>>Occupied <span class="room-filter-count"><?= $counts['Occupied'] ?></span></a>
+        </nav>
+    </div>
+    <div class="dashboard-filter-group">
+        <h3 class="room-filter-heading">Building</h3>
+        <nav class="room-filter-tabs" aria-label="Filter rooms by building">
+            <a class="room-filter-link" href="<?= e($filterUrl($statusFilter, '')) ?>" <?= $buildingFilter === '' ? 'aria-current="page"' : '' ?>>All buildings</a>
+            <?php foreach ($buildingOptions as $building): ?>
+                <a class="room-filter-link" href="<?= e($filterUrl($statusFilter, $building)) ?>" <?= $buildingFilter === $building ? 'aria-current="page"' : '' ?>><?= e($building) ?></a>
+            <?php endforeach; ?>
+        </nav>
+    </div>
+</section>
 
+<section class="dashboard-gallery" aria-labelledby="gallery-heading">
+<h2 id="gallery-heading">Explore rooms</h2>
 <?php if ($rooms === []): ?>
-    <p>No rooms found.</p>
+    <p class="dashboard-empty">No rooms found. Try a different search or filter.</p>
 <?php else: ?>
     <div class="room-card-grid" id="rooms">
         <?php foreach ($rooms as $room): ?>
@@ -105,13 +119,14 @@ ob_start();
                     <?php else: ?>
                         <span class="room-card-placeholder">ROOM IMAGE</span>
                     <?php endif; ?>
+                    <span class="badge <?= strtolower($room['status']) ?> dashboard-card-status"><?= e($room['status']) ?></span>
                     <span class="room-card-view" aria-hidden="true">View room</span>
                 </div>
                 <div class="room-card-details">
                     <span class="room-card-kicker">ROOM</span>
-                    <h2><?= e($room['room_name']) ?></h2>
-                    <p class="room-card-description"><?= e($room['building']) ?> · Capacity <?= (int) $room['capacity'] ?></p>
-                    <div class="room-card-footer"><span class="badge <?= strtolower($room['status']) ?>"><?= e($room['status']) ?></span></div>
+                    <h3><?= e($room['room_name']) ?></h3>
+                    <p class="room-card-description"><?= e($room['building']) ?></p>
+                    <div class="room-card-footer"><span>Capacity <strong><?= (int) $room['capacity'] ?></strong></span><span class="dashboard-card-action">View room <span aria-hidden="true">↗</span></span></div>
                 </div>
                 </a>
             </article>
@@ -125,12 +140,12 @@ ob_start();
                         <?php if ($imageUrl !== null): ?>
                             <img src="<?= e($imageUrl) ?>" alt="<?= e($room['room_name']) ?>">
                         <?php else: ?>
-                            <span>ROOM IMAGE</span>
+                            <span class="room-modal-placeholder">ROOM IMAGE</span>
                         <?php endif; ?>
                     </div>
                     <div class="room-modal-content">
+                        <span class="room-modal-kicker">CAMPUS ROOM</span>
                         <h2 id="room-title-<?= (int) $room['room_id'] ?>"><?= e($room['room_name']) ?></h2>
-                        <p>This room is in <?= e($room['building']) ?> and has capacity for <?= (int) $room['capacity'] ?> people.</p>
                         <dl class="room-modal-facts">
                             <div><dt>BUILDING</dt><dd><?= e($room['building']) ?></dd></div>
                             <div><dt>CAPACITY</dt><dd><?= (int) $room['capacity'] ?> people</dd></div>
@@ -143,4 +158,5 @@ ob_start();
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
+</section>
 <?php page($statusFilter !== '' ? $statusFilter . ' Rooms' : 'Room Management System', ob_get_clean());

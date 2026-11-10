@@ -2,6 +2,7 @@
 require __DIR__ . '/../../room_helpers.php';
 requireLogin();
 require __DIR__ . '/../../room_config.php';
+requireAdminTeacher($pdo);
 
 $currentUserId = positiveId($_SESSION['room_user_id'] ?? null);
 $actorStmt = $pdo->prepare('SELECT user_id, username, role, password_sha256 FROM users WHERE user_id = ?');
@@ -12,7 +13,6 @@ if (!$actor) {
     exit;
 }
 
-$isAdmin = $actor['role'] === 'admin';
 $_SESSION['room_role'] = $actor['role'];
 $_SESSION['room_username'] = $actor['username'];
 $accountId = positiveId($_GET['id'] ?? null);
@@ -20,11 +20,6 @@ if ($accountId === 0) {
     header('Location: room_accounts.php');
     exit;
 }
-if (!$isAdmin && $accountId !== $currentUserId) {
-    http_response_code(403);
-    exit('You cannot edit this account.');
-}
-
 $accountStmt = $pdo->prepare('SELECT user_id, username, email, role FROM users WHERE user_id = ?');
 $accountStmt->execute([$accountId]);
 $account = $accountStmt->fetch();
@@ -54,7 +49,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     } elseif ($newPassword !== $confirmPassword) {
         $error = 'The new passwords do not match.';
     } elseif (!hash_equals($actor['password_sha256'], hash('sha256', $currentPassword))) {
-        $error = $isAdmin ? 'Admin password is incorrect.' : 'Your current password is incorrect.';
+        $error = 'Admin password is incorrect.';
     } else {
         $duplicateStmt = $pdo->prepare('SELECT user_id FROM users WHERE (username = :username OR email = :email) AND user_id <> :user_id LIMIT 1');
         $duplicateStmt->execute([
@@ -88,9 +83,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
 ob_start();
 ?>
+<div class="dashboard-editor">
 <p class="account-back"><a href="room_accounts.php">← Back to accounts</a></p>
 <?php if ($error !== ''): ?><p class="error" role="alert"><?= e($error) ?></p><?php endif; ?>
-<div class="account-grid">
+<div class="account-grid account-editor-grid">
     <section class="account-card" aria-labelledby="account-title">
         <div class="account-card-heading">
             <div>
@@ -111,11 +107,12 @@ ob_start();
             <label for="account-confirm-password">Confirm new password
                 <input id="account-confirm-password" name="confirm_password" type="password" minlength="8" autocomplete="new-password" placeholder="Repeat new password">
             </label>
-            <label for="account-current-password"><?= $isAdmin ? 'Admin password' : 'Your current password' ?>
+            <label for="account-current-password">Admin password
                 <input id="account-current-password" name="current_password" type="password" required autocomplete="current-password" placeholder="Required to save changes">
             </label>
             <button type="submit">Save changes</button>
         </form>
     </section>
+</div>
 </div>
 <?php page('Edit Account', ob_get_clean());

@@ -38,18 +38,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $room = ['room_name' => $name, 'building' => $building, 'capacity' => (int)$capacity, 'status' => $status];
 }
 ob_start(); ?>
-<?php if ($error): ?><p class="error"><?= e($error) ?></p><?php endif; ?>
-<form method="post" enctype="multipart/form-data">
-<label>Room name <input name="room_name" maxlength="80" required value="<?= e($room['room_name']) ?>"></label>
-<label>Building <input name="building" maxlength="60" required value="<?= e($room['building']) ?>"></label>
-<label>Capacity <input type="number" name="capacity" min="0" required value="<?= (int)$room['capacity'] ?>"></label>
-<label>Status <select name="status" required>
-<?php foreach ($statuses as $s): ?><option value="<?= e($s) ?>" <?= $room['status'] === $s ? 'selected' : '' ?>><?= e($s) ?></option><?php endforeach; ?>
-</select></label>
-<?php $currentImage = roomImageUrl($id); ?>
-<?php if ($currentImage): ?><p><img class="room-edit-image" src="../../<?= e($currentImage) ?>" alt="Current image of <?= e($room['room_name']) ?>"></p><?php endif; ?>
-<label><?= $currentImage ? 'Replace room image' : 'Room image' ?> <input type="file" name="room_image" accept="image/jpeg,image/png,image/webp"></label>
-<p>Optional. JPG, PNG or WebP, up to 5 MB.</p>
-<button>Update room</button>
-</form>
+<div class="dashboard-editor">
+    <p class="dashboard-back"><a href="room_manage.php">← Back to rooms</a></p>
+    <?php if ($error): ?><p class="error" role="alert"><?= e($error) ?></p><?php endif; ?>
+    <section class="dashboard-editor-card" aria-labelledby="room-form-heading">
+        <span class="account-eyebrow">EDIT ROOM</span>
+        <h2 id="room-form-heading"><?= e($room['room_name']) ?></h2>
+        <form class="dashboard-editor-form" method="post" enctype="multipart/form-data">
+            <label>Room name <input name="room_name" maxlength="80" required value="<?= e($room['room_name']) ?>"></label>
+            <label>Building <input name="building" maxlength="60" required value="<?= e($room['building']) ?>"></label>
+            <label>Capacity <input type="number" name="capacity" min="0" required value="<?= (int)$room['capacity'] ?>"></label>
+            <label>Status <select name="status" required>
+                <?php foreach ($statuses as $s): ?><option value="<?= e($s) ?>" <?= $room['status'] === $s ? 'selected' : '' ?>><?= e($s) ?></option><?php endforeach; ?>
+            </select></label>
+            <?php $currentImage = roomImageUrl($id); ?>
+            <?php if ($currentImage): ?><div class="dashboard-current-image"><img class="room-edit-image" src="../../<?= e($currentImage) ?>" alt="Current image of <?= e($room['room_name']) ?>"></div><?php endif; ?>
+            <label><?= $currentImage ? 'Replace room image' : 'Room image' ?> <input type="file" name="room_image" accept="image/jpeg,image/png,image/webp"></label>
+            <p class="dashboard-field-note">Optional. JPG, PNG or WebP, up to 5 MB.</p>
+            <button type="submit">Update room</button>
+        </form>
+    </section>
+</div>
 <?php page('Edit Room', ob_get_clean());

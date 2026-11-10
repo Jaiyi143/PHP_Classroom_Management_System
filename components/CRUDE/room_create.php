@@ -36,16 +36,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ob_start(); ?>
-<?php if ($error): ?><p class="error"><?= e($error) ?></p><?php endif; ?>
-<form method="post" enctype="multipart/form-data">
-<label>Room name <input name="room_name" maxlength="80" required></label>
-<label>Building <input name="building" maxlength="60" required></label>
-<label>Capacity <input type="number" name="capacity" min="0" required></label>
-<label>Status <select name="status" required>
-<?php foreach ($statuses as $s): ?><option value="<?= e($s) ?>"><?= e($s) ?></option><?php endforeach; ?>
-</select></label>
-<label>Room image <input type="file" name="room_image" accept="image/jpeg,image/png,image/webp"></label>
-<p>Optional. JPG, PNG or WebP, up to 5 MB.</p>
-<button>Save room</button>
-</form>
+<div class="dashboard-editor">
+    <p class="dashboard-back"><a href="room_manage.php">← Back to rooms</a></p>
+    <?php if ($error): ?><p class="error" role="alert"><?= e($error) ?></p><?php endif; ?>
+    <section class="dashboard-editor-card" aria-labelledby="room-form-heading">
+        <span class="account-eyebrow">NEW ROOM</span>
+        <h2 id="room-form-heading">Room details</h2>
+        <form class="dashboard-editor-form" method="post" enctype="multipart/form-data">
+            <label>Room name <input name="room_name" maxlength="80" required></label>
+            <label>Building <input name="building" maxlength="60" required></label>
+            <label>Capacity <input type="number" name="capacity" min="0" required></label>
+            <label>Status <select name="status" required>
+                <?php foreach ($statuses as $s): ?><option value="<?= e($s) ?>"><?= e($s) ?></option><?php endforeach; ?>
+            </select></label>
+            <label>Room image <input type="file" name="room_image" accept="image/jpeg,image/png,image/webp"></label>
+            <p class="dashboard-field-note">Optional. JPG, PNG or WebP, up to 5 MB.</p>
+            <button type="submit">Save room</button>
+        </form>
+    </section>
+</div>
 <?php page('Add Room', ob_get_clean());
