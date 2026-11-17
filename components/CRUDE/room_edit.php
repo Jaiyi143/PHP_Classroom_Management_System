@@ -10,6 +10,8 @@ $stmt->execute([$id]);
 $room = $stmt->fetch();
 if (!$room) { http_response_code(404); exit('Room not found.'); }
 $statuses = ['Vacant', 'Occupied'];
+$buildings = roomBuildingOptions();
+$legacyBuilding = in_array($room['building'], $buildings, true) ? null : $room['building'];
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim((string)($_POST['room_name'] ?? ''));
@@ -18,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = (string)($_POST['status'] ?? '');
     $imageFile = is_array($_FILES['room_image'] ?? null) ? $_FILES['room_image'] : null;
     $imageError = roomImageUploadError($imageFile);
-    if ($name === '' || strlen($name) > 80 || $building === '' || strlen($building) > 60 || $capacity === false || !in_array($status, $statuses, true)) {
+    if ($name === '' || strlen($name) > 80 || !in_array($building, $buildings, true) || $capacity === false || !in_array($status, $statuses, true)) {
         $error = 'Please correct the fields.';
     } elseif ($imageError !== '') {
         $error = $imageError;
@@ -46,7 +48,11 @@ ob_start(); ?>
         <h2 id="room-form-heading"><?= e($room['room_name']) ?></h2>
         <form class="dashboard-editor-form" method="post" enctype="multipart/form-data">
             <label>Room name <input name="room_name" maxlength="80" required value="<?= e($room['room_name']) ?>"></label>
-            <label>Building <input name="building" maxlength="60" required value="<?= e($room['building']) ?>"></label>
+            <label>Building <select name="building" required>
+                <option value="" disabled <?= !in_array($room['building'], $buildings, true) ? 'selected' : '' ?>>Choose a building</option>
+                <?php foreach ($buildings as $option): ?><option value="<?= e($option) ?>" <?= $room['building'] === $option ? 'selected' : '' ?>><?= e($option) ?></option><?php endforeach; ?>
+            </select></label>
+            <?php if ($legacyBuilding !== null): ?><p class="dashboard-field-note">Current building: <?= e($legacyBuilding) ?>. Choose one of the available buildings when updating this room.</p><?php endif; ?>
             <label>Capacity <input type="number" name="capacity" min="0" required value="<?= (int)$room['capacity'] ?>"></label>
             <label>Status <select name="status" required>
                 <?php foreach ($statuses as $s): ?><option value="<?= e($s) ?>" <?= $room['status'] === $s ? 'selected' : '' ?>><?= e($s) ?></option><?php endforeach; ?>

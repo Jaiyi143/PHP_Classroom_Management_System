@@ -33,6 +33,10 @@ function roomRoleLabel(string $role): string {
     };
 }
 
+function roomBuildingOptions(): array {
+    return ['MET Building', 'Engineering Building', 'Library'];
+}
+
 function e(string $value): string {
     return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
@@ -50,7 +54,9 @@ function page(string $title, string $body): void {
     $profileInitial = strtoupper(substr($profileName, 0, 1));
     echo '<!doctype html><html lang="en"><head><meta charset="utf-8">';
     echo '<meta name="viewport" content="width=device-width,initial-scale=1">';
-    echo '<link rel="stylesheet" href="'.$base.'Style/styles.css?v=56"><title>'.e($title).'</title></head>';
+    echo '<link rel="stylesheet" href="'.$base.'Style/styles.css?v=56">';
+    echo '<script type="importmap">'.json_encode(['imports' => ['three' => ($base === '' ? './' : $base) . 'assets/vendor/three/three.module.js']], JSON_UNESCAPED_SLASHES).'</script>';
+    echo '<title>'.e($title).'</title></head>';
     echo '<body class="dashboard-page">';
     require __DIR__ . '/components/Dashboard/room_sidebar.php';
     echo '<main class="dashboard-content">';

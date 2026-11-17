@@ -5,7 +5,9 @@ require __DIR__ . '/../../room_config.php';
 requireAdminTeacher($pdo);
 require __DIR__ . '/room_images.php';
 $statuses = ['Vacant', 'Occupied'];
+$buildings = roomBuildingOptions();
 $error = '';
+$building = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim((string)($_POST['room_name'] ?? ''));
     $building = trim((string)($_POST['building'] ?? ''));
@@ -13,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = (string)($_POST['status'] ?? '');
     $imageFile = is_array($_FILES['room_image'] ?? null) ? $_FILES['room_image'] : null;
     $imageError = roomImageUploadError($imageFile);
-    if ($name === '' || strlen($name) > 80 || $building === '' || strlen($building) > 60 || $capacity === false || !in_array($status, $statuses, true)) {
+    if ($name === '' || strlen($name) > 80 || !in_array($building, $buildings, true) || $capacity === false || !in_array($status, $statuses, true)) {
         $error = 'Check the room name, building, capacity and status.';
     } elseif ($imageError !== '') {
         $error = $imageError;
@@ -44,7 +46,10 @@ ob_start(); ?>
         <h2 id="room-form-heading">Room details</h2>
         <form class="dashboard-editor-form" method="post" enctype="multipart/form-data">
             <label>Room name <input name="room_name" maxlength="80" required></label>
-            <label>Building <input name="building" maxlength="60" required></label>
+            <label>Building <select name="building" required>
+                <option value="" disabled <?= $building === '' ? 'selected' : '' ?>>Choose a building</option>
+                <?php foreach ($buildings as $option): ?><option value="<?= e($option) ?>" <?= $building === $option ? 'selected' : '' ?>><?= e($option) ?></option><?php endforeach; ?>
+            </select></label>
             <label>Capacity <input type="number" name="capacity" min="0" required></label>
             <label>Status <select name="status" required>
                 <?php foreach ($statuses as $s): ?><option value="<?= e($s) ?>"><?= e($s) ?></option><?php endforeach; ?>

@@ -18,3 +18,7 @@ No external service or API key is needed. For room search, the bot recognizes wo
 
 Install the build tools with `npm ci`, then run `npm run build:css` when `Style/input.css` changes. Generated `node_modules/` files are not tracked in Git.
 
+## Three.js
+
+Three.js is installed as an npm dependency. Run `npm run build:three` to copy its browser modules into `assets/vendor/three/`. Signed-in pages include an import map, so a page-specific module can use `import * as THREE from 'three';` without a CDN or a JavaScript bundler. No 3D scene is displayed until a page loads a module that creates one.
+
