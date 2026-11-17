@@ -252,9 +252,7 @@ tbody tr:hover { background: var(--color-surface-soft); }
 .room-modal:target { display: flex; animation: room-backdrop-in .2s ease both; }
 body:has(.room-modal:target) { overflow: hidden; }
 .room-modal-panel { width: min(100%, 920px); max-height: calc(100vh - 48px); overflow-y: auto; border: 1px solid #ead9da; border-radius: 20px; background: #fff; box-shadow: 0 24px 70px rgb(0 0 0 / 24%); }
-.room-modal:target .room-modal-panel { animation: room-panel-in .24s ease-out both; }
 @keyframes room-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes room-panel-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .room-modal-topbar { @apply flex items-center justify-between gap-4; padding: 14px 24px; border-bottom: 1px solid #ead9da; }
 .room-modal-eyebrow { color: #9f111b; font-size: .72rem; font-weight: 800; letter-spacing: .16em; }
 .room-modal-close { @apply grid size-10 shrink-0 place-items-center rounded-full no-underline; border: 1px solid #ead9da; background: #fff; color: #2b0608; font-size: 1.7rem; line-height: 1; }
@@ -366,7 +364,7 @@ body:has(.room-modal:target) { overflow: hidden; }
 .dashboard-back, .account-back { max-width: none; margin: 0 0 16px; }
 .dashboard-back a, .account-back a { color: #9f111b; font-weight: 700; text-decoration: none; }
 .dashboard-back a:hover, .account-back a:hover { text-decoration: underline; }
-.dashboard-editor-card { padding: clamp(22px, 4vw, 36px); border: 1px solid #ead9da; border-radius: 16px; background: #fff; }
+.dashboard-editor-card { padding: clamp(22px, 4vw, 36px); border: 1px solid #ead9da; border-radius: 20px; background: #fff; box-shadow: 0 24px 70px rgb(0 0 0 / 10%); }
 .dashboard-editor-card h2 { margin: 6px 0 24px; color: #3b0b0e; font-size: 1.6rem; line-height: 1.2; }
 .dashboard-editor-form { @apply grid gap-4; max-width: none; }
 .dashboard-editor-form label { margin: 0; color: #4b2226; font-size: .9rem; font-weight: 700; }
@@ -379,6 +377,31 @@ body:has(.room-modal:target) { overflow: hidden; }
 .dashboard-editor-actions { @apply flex flex-wrap items-center gap-4; margin-top: 24px; }
 .dashboard-editor-actions form { margin: 0; }
 .dashboard-editor-actions a { font-weight: 700; }
+.dashboard-edit-overlay { position: fixed; z-index: 60; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgb(25 17 18 / 76%); backdrop-filter: blur(4px); }
+body:has(.dashboard-edit-overlay) { overflow: hidden; }
+body:has(.dashboard-edit-overlay) .room-chat { display: none; }
+.dashboard-edit-modal { width: min(100%, 920px); max-height: calc(100vh - 32px); overflow-y: auto; border: 1px solid #ead9da; border-radius: 20px; background: #fff; box-shadow: 0 24px 70px rgb(0 0 0 / 24%); }
+.dashboard-edit-hero { display: grid; place-items: center; height: min(30vh, 300px); overflow: hidden; border-bottom: 1px solid #ead9da; background: #fff; color: #a77a7e; font-size: .75rem; font-weight: 800; letter-spacing: .16em; }
+.dashboard-edit-hero img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.dashboard-edit-hero--account { background: radial-gradient(circle at 50% 42%, #fff 0, #fff1f2 45%, #f6e7e8 100%); }
+.dashboard-edit-avatar { display: grid; width: 104px; height: 104px; place-items: center; border: 5px solid #fff; border-radius: 50%; background: #9f111b; box-shadow: 0 12px 30px rgb(70 6 11 / 18%); color: #fff; font-size: 3rem; letter-spacing: 0; }
+.dashboard-edit-content { padding: clamp(24px, 4vw, 42px); }
+.dashboard-edit-content h2 { margin: 8px 0 16px; color: #3b0b0e; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.08; }
+.dashboard-edit-subtitle { margin: -5px 0 20px; color: #714e52; }
+.dashboard-edit-content > .error { margin: 18px 0; }
+.dashboard-edit-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: none; padding-top: 14px; }
+.dashboard-edit-form label { display: block; min-width: 0; margin: 0; padding: 16px; border: 1px solid #ead9da; border-radius: 12px; background: #fff; color: #714e52; font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.dashboard-edit-form :is(input:not([type="hidden"]), select) { display: block; width: 100%; min-height: 48px; margin-top: 10px; padding: 10px 12px; border: 1px solid #ead9da; border-radius: 8px; color: #3b0b0e; font-size: 1rem; font-weight: 500; letter-spacing: 0; text-transform: none; }
+.dashboard-edit-form input[type="file"] { padding: 10px; }
+.dashboard-edit-field--wide, .dashboard-edit-form .dashboard-field-note, .dashboard-edit-actions { grid-column: 1 / -1; }
+.dashboard-edit-form .dashboard-field-note { margin: -6px 0 0; }
+.dashboard-edit-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 12px; padding-top: 16px; }
+.dashboard-edit-actions a, .dashboard-edit-actions button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; margin: 0; padding: 10px 20px; border-radius: 10px; font-weight: 700; text-decoration: none; }
+.dashboard-edit-actions a { border: 1px solid #ead9da; background: #fff; color: #3b0b0e; }
+.dashboard-edit-actions a:hover { border-color: #9f111b; color: #9f111b; }
+.dashboard-edit-actions button { border: 1px solid #9f111b; background: #9f111b; color: #fff; }
+.dashboard-edit-actions button:hover { background: #760b12; }
+@media (max-width: 640px) { .dashboard-edit-hero { height: 180px; } .dashboard-edit-form { grid-template-columns: 1fr; } .dashboard-edit-content { padding: 22px; } }
 
 @media (max-width: 1050px) {
     .dashboard-gallery .room-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -419,15 +442,18 @@ body:has(.room-modal:target) { overflow: hidden; }
 .account-form label { margin: 0; color: #4b2226; font-size: .9rem; }
 .account-form input { margin-top: 7px; }
 .account-form button { justify-self: start; margin-top: 4px; }
-.account-list .account-card { @apply flex flex-wrap items-center justify-between gap-4; border-radius: 16px; box-shadow: none; }
+.account-list .account-card { @apply flex flex-wrap items-center justify-between gap-4; border-radius: 20px; box-shadow: 0 2px 4px rgb(70 6 11 / 5%); }
 .account-list .account-card-heading { @apply flex items-center gap-4; min-width: 0; flex: 1; padding: 0; border: 0; }
 .account-avatar { @apply grid size-14 shrink-0 place-items-center rounded-full; background: #f6e7e8; color: #9f111b; font-size: 1.45rem; font-weight: 800; }
 .account-list .account-edit-link { margin: 0; }
 .account-editor-grid { max-width: none; }
-.account-editor-grid .account-card { padding: clamp(22px, 4vw, 36px); border-radius: 16px; box-shadow: none; }
+.account-editor-grid .account-card { padding: clamp(22px, 4vw, 36px); border-radius: 20px; box-shadow: 0 24px 70px rgb(0 0 0 / 10%); }
 .account-editor-grid .account-card:hover { border-color: #ead9da; transform: none; }
 .account-editor-grid .account-form :is(input, select) { min-height: 52px; padding: 10px 14px; border-radius: 8px; background: #fff; font-size: 1rem; }
 .account-editor-grid .account-form button { min-height: 50px; padding-inline: 24px; border-radius: 8px; }
+.dashboard-edit-modal .account-form label { color: #714e52; font-size: .75rem; }
+.dashboard-edit-modal .account-form input { margin-top: 10px; }
+.dashboard-edit-modal .account-form button { justify-self: auto; margin-top: 0; }
 
 @media (max-width: 760px) {
     .dashboard-page { display: block; }
@@ -555,7 +581,7 @@ body:has(.room-modal:target) { overflow: hidden; }
     .dashboard-page, .sidebar-toggle-button img, .sidebar-rail-name, .sidebar-nav a, .room-filter-link,
     .room-card, .room-card-image img, .room-card-view, .room-card-link .room-card-image::after,
     .account-card, .auth-role-nav a, .dashboard-create-link, .dashboard-profile, button { transition: none; }
-    .room-modal:target, .room-modal:target .room-modal-panel { animation: none; }
+    .room-modal:target { animation: none; }
     .room-card:has(.room-card-link:is(:hover, :focus-visible)),
     .room-card-link:is(:hover, :focus-visible) .room-card-image img,
     .account-card:hover, .dashboard-create-link:hover, .sidebar-toggle:checked + .sidebar-rail .sidebar-toggle-button img,
