@@ -22,7 +22,6 @@ function roomAiParseCriteria(string $question, array $buildings): array {
         'status' => $status,
         'min_capacity' => $capacity,
         'building' => $buildingMatch,
-        'name' => null,
         'unsupported' => $unsupported,
         'recognized' => $status !== null || $capacity !== null || $buildingMatch !== null,
     ];
@@ -34,7 +33,6 @@ function roomAiFind(PDO $pdo, array $criteria): array {
     if ($criteria['status'] !== null) { $conditions[] = 'status = :status'; $params['status'] = $criteria['status']; }
     if ($criteria['min_capacity'] !== null) { $conditions[] = 'capacity >= :capacity'; $params['capacity'] = $criteria['min_capacity']; }
     if ($criteria['building'] !== null) { $conditions[] = 'building = :building'; $params['building'] = $criteria['building']; }
-    if ($criteria['name'] !== null) { $conditions[] = 'room_name LIKE :name'; $params['name'] = '%' . addcslashes($criteria['name'], '%_\\') . '%'; }
     $sql = 'SELECT room_id, room_name, building, capacity, status FROM rooms';
     if ($conditions !== []) $sql .= ' WHERE ' . implode(' AND ', $conditions);
     $sql .= ' ORDER BY room_id LIMIT 30';

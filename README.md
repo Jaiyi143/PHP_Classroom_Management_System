@@ -1,4 +1,4 @@
-# php jer jer
+# Room Management System
 
 ## Room assistant setup
 
@@ -13,4 +13,8 @@ To add a saved question and answer, open `AI/faq.php` and add a new `'Question?'
 The chat also replies to short greetings such as “hi,” “hello,” “hellow,” and “good morning.”
 
 No external service or API key is needed. For room search, the bot recognizes words such as “vacant” or “occupied,” a building name, and requests such as “for 30 students.” Room facts and matching results come from MySQL. Other questions receive a prompt explaining what the bot can answer.
+
+## CSS development
+
+Install the build tools with `npm ci`, then run `npm run build:css` when `Style/input.css` changes. Generated `node_modules/` files are not tracked in Git.
 
