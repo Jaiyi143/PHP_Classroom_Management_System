@@ -37,7 +37,7 @@ $message = $error !== ''
     : ($faqAnswer ?? ($unsupported
         ? 'I can search current room status, building, and capacity. I cannot check future schedules, equipment, or make reservations.'
         : (!$recognized
-            ? 'I can answer saved questions or search rooms by current status, building, and capacity. Try “Find a vacant room for 30 students in the Engineering Building.”'
+            ? 'I can answer or search rooms by current status, building, and capacity. Try “Find a vacant room for 30 students in the Engineering Building.”'
             : ($rooms === []
                 ? 'No rooms match that request. Try another building, capacity, or status.'
                 : 'These rooms match the current records:'))));
