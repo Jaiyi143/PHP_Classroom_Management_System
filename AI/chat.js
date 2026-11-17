@@ -75,7 +75,10 @@
       const avatar = document.createElement('span');
       avatar.className = 'room-chat-avatar';
       avatar.setAttribute('aria-hidden', 'true');
-      avatar.textContent = 'RC';
+      const logo = document.createElement('img');
+      logo.src = chatRoot.dataset.roomChatLogoUrl;
+      logo.alt = '';
+      avatar.append(logo);
       row.append(avatar);
     }
     const body = document.createElement('div');
@@ -114,10 +117,16 @@
     history.push({ role: 'user', text: question });
     input.value = '';
     persist();
-    const reply = addMessage('Searching rooms…');
+    const reply = addMessage('');
     const replyText = reply.querySelector('p');
+    replyText.classList.add('room-chat-typing');
+    replyText.setAttribute('aria-label', 'Room Assistant is typing');
+    replyText.innerHTML = '<span></span><span></span><span></span>';
+    const startedTyping = performance.now();
     sendButton.disabled = true;
     messages.setAttribute('aria-busy', 'true');
+    let answer;
+    let rooms = [];
     try {
       const body = new FormData(form);
       body.set('question', question);
@@ -129,16 +138,19 @@
       });
       const result = await response.json();
       if (typeof result.message !== 'string' || !Array.isArray(result.rooms)) throw new Error('Invalid response');
-      replyText.textContent = result.message;
-      const rooms = response.ok ? result.rooms : [];
-      appendRooms(reply, rooms);
-      history.push({ role: 'assistant', text: result.message, rooms });
-      persist();
+      answer = result.message;
+      rooms = response.ok ? result.rooms : [];
     } catch (_) {
-      replyText.textContent = 'I could not load an answer right now. Please try again.';
-      history.push({ role: 'assistant', text: replyText.textContent });
-      persist();
+      answer = 'I could not load an answer right now. Please try again.';
     } finally {
+      const remaining = Math.max(0, 600 - (performance.now() - startedTyping));
+      if (remaining) await new Promise((resolve) => setTimeout(resolve, remaining));
+      replyText.classList.remove('room-chat-typing');
+      replyText.removeAttribute('aria-label');
+      replyText.textContent = answer;
+      appendRooms(reply, rooms);
+      history.push({ role: 'assistant', text: answer, rooms });
+      persist();
       sendButton.disabled = false;
       messages.removeAttribute('aria-busy');
       messages.scrollTop = messages.scrollHeight;

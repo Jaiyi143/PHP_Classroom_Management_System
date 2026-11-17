@@ -2,7 +2,7 @@
 $_SESSION['room_ai_csrf'] ??= bin2hex(random_bytes(32));
 $chatStorageKey = 'room-chat-' . hash('sha256', session_id());
 ?>
-<div class="room-chat" id="room-ai" data-room-chat-key="<?= e($chatStorageKey) ?>" data-room-chat-room-url="<?= e($base) ?>room_index.php">
+<div class="room-chat" id="room-ai" data-room-chat-key="<?= e($chatStorageKey) ?>" data-room-chat-room-url="<?= e($base) ?>room_index.php" data-room-chat-logo-url="<?= e($base) ?>assets/tup-logo.png">
     <section class="room-chat-panel" id="room-chat-panel" aria-labelledby="room-chat-heading" data-room-ai-panel>
         <header class="room-chat-header">
             <h2 id="room-chat-heading">Now chatting</h2>
@@ -12,7 +12,7 @@ $chatStorageKey = 'room-chat-' . hash('sha256', session_id());
         </header>
         <div class="room-chat-messages" role="log" aria-label="Room assistant conversation" aria-live="polite" data-room-ai-messages>
             <div class="room-chat-message room-chat-message--assistant">
-                <span class="room-chat-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v11H9l-4 3V5Z"/><path d="M9 10h.01M12 10h.01M15 10h.01"/></svg></span>
+                <span class="room-chat-avatar" aria-hidden="true"><img src="<?= e($base) ?>assets/tup-logo.png" alt=""></span>
                 <div><span class="room-chat-sender">Room Assistant</span><p>Hi! Ask me about room availability, building, or capacity.</p></div>
             </div>
         </div>
@@ -24,7 +24,7 @@ $chatStorageKey = 'room-chat-' . hash('sha256', session_id());
         </form>
     </section>
     <button class="room-chat-launcher" type="button" aria-controls="room-chat-panel" aria-expanded="true" data-room-ai-launcher>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 3V5Z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
+        <img src="<?= e($base) ?>assets/tup-logo.png" alt="" aria-hidden="true">
         <span>Room Chat</span>
     </button>
 </div>

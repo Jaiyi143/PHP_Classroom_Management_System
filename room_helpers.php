@@ -54,7 +54,7 @@ function page(string $title, string $body): void {
     $profileInitial = strtoupper(substr($profileName, 0, 1));
     echo '<!doctype html><html lang="en"><head><meta charset="utf-8">';
     echo '<meta name="viewport" content="width=device-width,initial-scale=1">';
-    echo '<link rel="stylesheet" href="'.$base.'Style/styles.css?v=63">';
+    echo '<link rel="stylesheet" href="'.$base.'Style/styles.css?v=64">';
     echo '<script type="importmap">'.json_encode(['imports' => ['three' => ($base === '' ? './' : $base) . 'assets/vendor/three/three.module.js']], JSON_UNESCAPED_SLASHES).'</script>';
     echo '<title>'.e($title).'</title></head>';
     echo '<body class="dashboard-page">';
@@ -73,5 +73,5 @@ function page(string $title, string $body): void {
     echo $body.'</main>';
     require __DIR__ . '/AI/room_chat_widget.php';
     echo '<script type="module" src="'.$base.'assets/js/dashboard-animation.js?v=5"></script>';
-    echo '<script src="'.$base.'AI/chat.js?v=2" defer></script></body></html>';
+    echo '<script src="'.$base.'AI/chat.js?v=3" defer></script></body></html>';
 }
