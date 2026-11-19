@@ -45,9 +45,6 @@
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && !panel.hidden) setOpen(false);
   });
-  document.querySelector('[data-room-chat-logout]')?.addEventListener('click', () => {
-    try { sessionStorage.removeItem(storageKey); } catch (_) { /* Storage may be disabled. */ }
-  });
   input.addEventListener('input', persist);
 
   const appendRooms = (body, rooms) => {

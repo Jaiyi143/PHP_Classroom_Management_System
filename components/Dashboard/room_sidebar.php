@@ -13,7 +13,7 @@
             <a href="<?= $base ?>room_index.php" <?= $currentPage === 'room_index.php' ? 'aria-current="page"' : '' ?>>DASHBOARD</a>
             <?php if (($_SESSION['room_role'] ?? '') === 'admin'): ?>
                 <a href="<?= $base ?>components/CRUDE/room_manage.php" <?= in_array($currentPage, ['room_manage.php', 'room_create.php', 'room_edit.php', 'room_delete.php'], true) ? 'aria-current="page"' : '' ?>>EDIT ROOMS</a>
-                <a href="<?= $base ?>components/Dashboard/room_accounts.php" <?= in_array($currentPage, ['room_accounts.php', 'room_account_edit.php', 'room_account_create.php'], true) ? 'aria-current="page"' : '' ?>>ACCOUNTS</a>
+                <a href="<?= $base ?>components/Dashboard/room_accounts.php" <?= in_array($currentPage, ['room_accounts.php', 'room_account_edit.php', 'room_account_create.php', 'room_account_delete.php'], true) ? 'aria-current="page"' : '' ?>>ACCOUNTS</a>
             <?php endif; ?>
         </nav>
         <nav class="sidebar-nav sidebar-nav-bottom" aria-label="Account navigation">

@@ -453,6 +453,31 @@ body:has(.dashboard-edit-overlay) .room-chat { display: none; }
 .account-list .account-card-heading { @apply flex items-center gap-4; min-width: 0; flex: 1; padding: 0; border: 0; }
 .account-avatar { @apply grid size-14 shrink-0 place-items-center rounded-full; background: #f6e7e8; color: #9f111b; font-size: 1.45rem; font-weight: 800; }
 .account-list .account-edit-link { margin: 0; }
+.account-delete-link { display: inline-flex; align-items: center; min-height: 42px; padding: 9px 14px; border: 1px solid #b72a34; border-radius: 6px; color: #9f111b; font-weight: 700; text-decoration: none; }
+.account-delete-link:hover { background: #fff1f2; }
+.dashboard-edit-actions .account-delete-link { margin-right: auto; border-color: #b72a34; color: #9f111b; }
+.dashboard-edit-actions .account-delete-link:hover { background: #fff1f2; }
+.account-delete-modal { max-width: 580px; }
+.account-delete-modal .dashboard-edit-content > p:not(.error) { color: #714e52; }
+.account-delete-form { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; max-width: none; margin-top: 28px; }
+.account-delete-form a, .account-delete-form button { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; margin: 0; padding: 10px 18px; border-radius: 8px; font-weight: 700; text-decoration: none; }
+.account-delete-form a { border: 1px solid #ead9da; color: #3b0b0e; }
+.account-delete-form button { border: 1px solid #9f111b; background: #9f111b; color: #fff; }
+.logout-overlay { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 16px; background: rgb(25 17 18 / 76%); backdrop-filter: blur(5px); transition: background .45s ease; }
+.logout-overlay[hidden], .logout-overlay [hidden] { display: none !important; }
+body.logout-confirm-open { overflow: hidden; }
+.logout-confirm, .logout-loading { position: relative; width: min(100%, 440px); padding: 32px; border: 1px solid #ead9da; border-radius: 20px; background: #fff; box-shadow: 0 24px 70px rgb(0 0 0 / 24%); }
+.logout-confirm h2 { margin: 10px 0; color: #3b0b0e; font-size: 2rem; }
+.logout-confirm p { margin: 0; color: #714e52; }
+.logout-confirm-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; }
+.logout-confirm-actions button { min-height: 46px; margin: 0; padding: 10px 18px; border: 1px solid #ead9da; border-radius: 8px; background: #fff; color: #3b0b0e; font-weight: 700; }
+.logout-confirm-actions [data-logout-proceed] { border-color: #9f111b; background: #9f111b; color: #fff; }
+.logout-confirm-actions [data-logout-proceed]:hover { background: #760b12; }
+.logout-overlay.is-loading { background: #260305; }
+body.is-logging-out .dashboard-sidebar, body.is-logging-out .dashboard-content, body.is-logging-out .room-chat { opacity: 0; filter: blur(8px); transform: scale(.88); transition: opacity .42s ease, filter .42s ease, transform .48s cubic-bezier(.2,.8,.2,1); }
+.logout-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 350px; text-align: center; animation: logout-loading-enter .5s ease .15s backwards; }
+.logout-loading .auth-loading-jerjer { right: 24px; }
+@keyframes logout-loading-enter { from { opacity: 0; transform: scale(.65); } to { opacity: 1; transform: scale(1); } }
 .account-editor-grid { max-width: none; }
 .account-editor-grid .account-card { padding: clamp(22px, 4vw, 36px); border-radius: 20px; box-shadow: 0 24px 70px rgb(0 0 0 / 10%); }
 .account-editor-grid .account-card:hover { border-color: #ead9da; transform: none; }
@@ -585,6 +610,7 @@ body:has(.dashboard-edit-overlay) .room-chat { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .logout-overlay, .logout-loading, body.is-logging-out .dashboard-sidebar, body.is-logging-out .dashboard-content, body.is-logging-out .room-chat { animation: none; transition: none; }
     .dashboard-page, .sidebar-toggle-button img, .sidebar-rail-name, .sidebar-nav a, .room-filter-link,
     .room-card, .room-card-image img, .room-card-view, .room-card-link .room-card-image::after,
     .account-card, .auth-role-nav a, .dashboard-create-link, .dashboard-profile, button { transition: none; }

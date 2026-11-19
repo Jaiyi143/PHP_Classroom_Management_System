@@ -29,6 +29,7 @@ ob_start();
 </div>
 <?php if (isset($_GET['updated'])): ?><p class="auth-success" role="status">Account updated successfully.</p><?php endif; ?>
 <?php if (isset($_GET['created'])): ?><p class="auth-success" role="status">Account added successfully.</p><?php endif; ?>
+<?php if (isset($_GET['deleted'])): ?><p class="auth-success" role="status">Account deleted successfully.</p><?php endif; ?>
 <div class="account-grid account-list">
     <?php foreach ($accounts as $account): ?>
         <?php $accountId = (int) $account['user_id']; ?>

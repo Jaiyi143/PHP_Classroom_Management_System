@@ -107,7 +107,10 @@ ob_start();
             <label for="account-current-password">Admin password
                 <input id="account-current-password" name="current_password" type="password" required autocomplete="current-password" placeholder="Required to save changes">
             </label>
-            <div class="dashboard-edit-actions"><a href="room_accounts.php">Cancel</a><button type="submit">Save changes</button></div>
+            <div class="dashboard-edit-actions">
+                <?php if ($accountId !== $currentUserId): ?><a class="account-delete-link" href="room_account_delete.php?id=<?= $accountId ?>">Delete account</a><?php endif; ?>
+                <a href="room_accounts.php">Cancel</a><button type="submit">Save changes</button>
+            </div>
         </form>
         </div>
     </section>

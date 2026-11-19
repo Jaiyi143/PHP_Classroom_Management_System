@@ -15,7 +15,7 @@ $role = ($_GET['role'] ?? '') === 'admin' ? 'admin' : 'student';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Log in | Room Management System</title>
-    <link rel="stylesheet" href="../../Style/styles.css?v=59">
+    <link rel="stylesheet" href="../../Style/styles.css?v=66">
     <script type="importmap">{"imports":{"three":"../../assets/vendor/three/three.module.js"}}</script>
 </head>
 <body class="auth-page">
@@ -61,6 +61,6 @@ $role = ($_GET['role'] ?? '') === 'admin' ? 'admin' : 'student';
         </div>
     </main>
     <script type="module" src="../../assets/js/login-animation.js?v=9"></script>
-    <script type="module" src="../../assets/js/login-transition.js?v=2"></script>
+    <script type="module" src="../../assets/js/login-transition.js?v=3"></script>
 </body>
 </html>
