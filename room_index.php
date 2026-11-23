@@ -9,7 +9,7 @@ $statusFilter = (string) ($_GET['status'] ?? '');
 if (!in_array($statusFilter, ['Vacant', 'Occupied'], true)) {
     $statusFilter = '';
 }
-$buildingOptions = ['MET Building', 'Engineering Building', 'Library'];
+$buildingOptions = roomBuildingOptions();
 $buildingFilter = (string) ($_GET['building'] ?? '');
 if (!in_array($buildingFilter, $buildingOptions, true)) {
     $buildingFilter = '';

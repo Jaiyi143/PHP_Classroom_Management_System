@@ -1,7 +1,9 @@
 <?php
 function roomBasePath(): string {
     $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
-    return str_contains($script, '/components/') ? '../../' : '';
+    if (str_contains($script, '/components/')) return '../../';
+    if (str_contains($script, '/AI/')) return '../';
+    return '';
 }
 function requireLogin(): void {
     if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -31,6 +33,10 @@ function roomRoleLabel(string $role): string {
     };
 }
 
+function roomBuildingOptions(): array {
+    return ['MET Building', 'Engineering Building', 'Library'];
+}
+
 function e(string $value): string {
     return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
@@ -48,7 +54,9 @@ function page(string $title, string $body): void {
     $profileInitial = strtoupper(substr($profileName, 0, 1));
     echo '<!doctype html><html lang="en"><head><meta charset="utf-8">';
     echo '<meta name="viewport" content="width=device-width,initial-scale=1">';
-    echo '<link rel="stylesheet" href="'.$base.'Style/styles.css?v=56"><title>'.e($title).'</title></head>';
+    echo '<link rel="stylesheet" href="'.$base.'Style/styles.css?v=66">';
+    echo '<script type="importmap">'.json_encode(['imports' => ['three' => ($base === '' ? './' : $base) . 'assets/vendor/three/three.module.js']], JSON_UNESCAPED_SLASHES).'</script>';
+    echo '<title>'.e($title).'</title></head>';
     echo '<body class="dashboard-page">';
     require __DIR__ . '/components/Dashboard/room_sidebar.php';
     echo '<main class="dashboard-content">';
@@ -62,5 +70,10 @@ function page(string $title, string $body): void {
     }
     echo '<span class="dashboard-profile-avatar" aria-hidden="true">'.e($profileInitial).'</span><span class="dashboard-profile-copy"><strong>'.e($profileName).'</strong><span>'.e($profileRole).'</span></span>';
     echo (($_SESSION['room_role'] ?? '') === 'admin' ? '</a>' : '</div>').'</div></div>';
-    echo $body.'</main></body></html>';
+    echo $body.'</main>';
+    require __DIR__ . '/AI/room_chat_widget.php';
+    require __DIR__ . '/components/Dashboard/room_logout_transition.php';
+    echo '<script type="module" src="'.$base.'assets/js/dashboard-animation.js?v=5"></script>';
+    echo '<script type="module" src="'.$base.'assets/js/logout-transition.js?v=1"></script>';
+    echo '<script src="'.$base.'AI/chat.js?v=5" defer></script></body></html>';
 }

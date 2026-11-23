@@ -6,6 +6,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     exit;
 }
 
+$expectsJson = str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
+
 $username = $_POST['username'] ?? null;
 $password = $_POST['password'] ?? null;
 $role = $_POST['role'] ?? null;
@@ -28,7 +30,19 @@ if ($account && $account['role'] === $role && (
     $_SESSION['room_user_id'] = (int) $account['user_id'];
     $_SESSION['room_username'] = $account['username'];
     $_SESSION['room_role'] = $account['role'];
+    if ($expectsJson) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => true, 'redirect' => '../../room_index.php']);
+        exit;
+    }
     header('Location: ../../room_index.php');
+    exit;
+}
+
+if ($expectsJson) {
+    http_response_code(401);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false]);
     exit;
 }
 

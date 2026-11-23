@@ -83,20 +83,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
 ob_start();
 ?>
-<div class="dashboard-editor">
-<p class="account-back"><a href="room_accounts.php">← Back to accounts</a></p>
-<?php if ($error !== ''): ?><p class="error" role="alert"><?= e($error) ?></p><?php endif; ?>
-<div class="account-grid account-editor-grid">
-    <section class="account-card" aria-labelledby="account-title">
-        <div class="account-card-heading">
-            <div>
-                <span class="account-eyebrow"><?= e(strtoupper(roomRoleLabel($account['role']))) ?> ACCOUNT</span>
-                <h2 id="account-title"><?= e($account['username']) ?></h2>
-                <?php if ($account['email']): ?><p><?= e($account['email']) ?></p><?php endif; ?>
-            </div>
+<div class="dashboard-edit-overlay">
+    <section class="dashboard-edit-modal" role="dialog" aria-modal="true" aria-labelledby="account-title">
+        <div class="room-modal-topbar"><span class="room-modal-eyebrow">EDIT ACCOUNT</span><a class="room-modal-close" href="room_accounts.php" aria-label="Close edit account">×</a></div>
+        <div class="dashboard-edit-hero dashboard-edit-hero--account"><span class="dashboard-edit-avatar" aria-hidden="true"><?= e(strtoupper(substr($account['username'], 0, 1))) ?></span></div>
+        <div class="dashboard-edit-content">
+            <span class="room-modal-kicker"><?= e(strtoupper(roomRoleLabel($account['role']))) ?> ACCOUNT</span>
+            <h2 id="account-title"><?= e($account['username']) ?></h2>
+            <?php if ($account['email']): ?><p class="dashboard-edit-subtitle"><?= e($account['email']) ?></p><?php endif; ?>
             <?php if ($accountId === $currentUserId): ?><span class="account-self">You</span><?php endif; ?>
-        </div>
-        <form method="post" class="account-form">
+            <?php if ($error !== ''): ?><p class="error" role="alert"><?= e($error) ?></p><?php endif; ?>
+        <form method="post" class="account-form dashboard-edit-form">
             <input type="hidden" name="csrf" value="<?= e($_SESSION['room_account_csrf']) ?>">
             <label for="account-username">Username
                 <input id="account-username" name="username" maxlength="80" minlength="3" required autocomplete="off" value="<?= e($username) ?>">
@@ -110,9 +107,12 @@ ob_start();
             <label for="account-current-password">Admin password
                 <input id="account-current-password" name="current_password" type="password" required autocomplete="current-password" placeholder="Required to save changes">
             </label>
-            <button type="submit">Save changes</button>
+            <div class="dashboard-edit-actions">
+                <?php if ($accountId !== $currentUserId): ?><a class="account-delete-link" href="room_account_delete.php?id=<?= $accountId ?>">Delete account</a><?php endif; ?>
+                <a href="room_accounts.php">Cancel</a><button type="submit">Save changes</button>
+            </div>
         </form>
+        </div>
     </section>
-</div>
 </div>
 <?php page('Edit Account', ob_get_clean());

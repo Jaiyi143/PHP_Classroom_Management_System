@@ -10,6 +10,8 @@ $stmt->execute([$id]);
 $room = $stmt->fetch();
 if (!$room) { http_response_code(404); exit('Room not found.'); }
 $statuses = ['Vacant', 'Occupied'];
+$buildings = roomBuildingOptions();
+$legacyBuilding = in_array($room['building'], $buildings, true) ? null : $room['building'];
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim((string)($_POST['room_name'] ?? ''));
@@ -18,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = (string)($_POST['status'] ?? '');
     $imageFile = is_array($_FILES['room_image'] ?? null) ? $_FILES['room_image'] : null;
     $imageError = roomImageUploadError($imageFile);
-    if ($name === '' || strlen($name) > 80 || $building === '' || strlen($building) > 60 || $capacity === false || !in_array($status, $statuses, true)) {
+    if ($name === '' || strlen($name) > 80 || !in_array($building, $buildings, true) || $capacity === false || !in_array($status, $statuses, true)) {
         $error = 'Please correct the fields.';
     } elseif ($imageError !== '') {
         $error = $imageError;
@@ -37,26 +39,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $room = ['room_name' => $name, 'building' => $building, 'capacity' => (int)$capacity, 'status' => $status];
 }
+$currentImage = roomImageUrl($id);
 ob_start(); ?>
-<div class="dashboard-editor">
-    <p class="dashboard-back"><a href="room_manage.php">← Back to rooms</a></p>
-    <?php if ($error): ?><p class="error" role="alert"><?= e($error) ?></p><?php endif; ?>
-    <section class="dashboard-editor-card" aria-labelledby="room-form-heading">
-        <span class="account-eyebrow">EDIT ROOM</span>
-        <h2 id="room-form-heading"><?= e($room['room_name']) ?></h2>
-        <form class="dashboard-editor-form" method="post" enctype="multipart/form-data">
+<div class="dashboard-edit-overlay">
+    <section class="dashboard-edit-modal" role="dialog" aria-modal="true" aria-labelledby="room-form-heading">
+        <div class="room-modal-topbar"><span class="room-modal-eyebrow">EDIT ROOM</span><a class="room-modal-close" href="room_manage.php" aria-label="Close edit room">×</a></div>
+        <div class="dashboard-edit-hero">
+            <?php if ($currentImage): ?><img src="../../<?= e($currentImage) ?>" alt="Current image of <?= e($room['room_name']) ?>"><?php else: ?><span class="room-modal-placeholder">ROOM IMAGE</span><?php endif; ?>
+        </div>
+        <div class="dashboard-edit-content">
+            <span class="room-modal-kicker">CAMPUS ROOM</span>
+            <h2 id="room-form-heading"><?= e($room['room_name']) ?></h2>
+            <?php if ($error): ?><p class="error" role="alert"><?= e($error) ?></p><?php endif; ?>
+            <form class="dashboard-editor-form dashboard-edit-form" method="post" enctype="multipart/form-data">
             <label>Room name <input name="room_name" maxlength="80" required value="<?= e($room['room_name']) ?>"></label>
-            <label>Building <input name="building" maxlength="60" required value="<?= e($room['building']) ?>"></label>
+            <label>Building <select name="building" required>
+                <option value="" disabled <?= !in_array($room['building'], $buildings, true) ? 'selected' : '' ?>>Choose a building</option>
+                <?php foreach ($buildings as $option): ?><option value="<?= e($option) ?>" <?= $room['building'] === $option ? 'selected' : '' ?>><?= e($option) ?></option><?php endforeach; ?>
+            </select></label>
+            <?php if ($legacyBuilding !== null): ?><p class="dashboard-field-note">Current building: <?= e($legacyBuilding) ?>. Choose one of the available buildings when updating this room.</p><?php endif; ?>
             <label>Capacity <input type="number" name="capacity" min="0" required value="<?= (int)$room['capacity'] ?>"></label>
             <label>Status <select name="status" required>
                 <?php foreach ($statuses as $s): ?><option value="<?= e($s) ?>" <?= $room['status'] === $s ? 'selected' : '' ?>><?= e($s) ?></option><?php endforeach; ?>
             </select></label>
-            <?php $currentImage = roomImageUrl($id); ?>
-            <?php if ($currentImage): ?><div class="dashboard-current-image"><img class="room-edit-image" src="../../<?= e($currentImage) ?>" alt="Current image of <?= e($room['room_name']) ?>"></div><?php endif; ?>
-            <label><?= $currentImage ? 'Replace room image' : 'Room image' ?> <input type="file" name="room_image" accept="image/jpeg,image/png,image/webp"></label>
-            <p class="dashboard-field-note">Optional. JPG, PNG or WebP, up to 5 MB.</p>
-            <button type="submit">Update room</button>
-        </form>
+            <label class="dashboard-edit-field--wide"><?= $currentImage ? 'Replace room image' : 'Room image' ?> <input type="file" name="room_image" accept="image/jpeg,image/png,image/webp"></label>
+            <p class="dashboard-field-note dashboard-edit-field--wide">Optional. JPG, PNG or WebP, up to 5 MB.</p>
+            <div class="dashboard-edit-actions"><a href="room_manage.php">Cancel</a><button type="submit">Update room</button></div>
+            </form>
+        </div>
     </section>
 </div>
 <?php page('Edit Room', ob_get_clean());

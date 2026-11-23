@@ -2,10 +2,14 @@
   "private": true,
   "scripts": {
     "build:css": "tailwindcss -i ./Style/input.css -o ./Style/styles.css --minify",
-    "watch:css": "tailwindcss -i ./Style/input.css -o ./Style/styles.css --watch"
+    "watch:css": "tailwindcss -i ./Style/input.css -o ./Style/styles.css --watch",
+    "build:three": "node scripts/build-three.mjs"
   },
   "devDependencies": {
     "@tailwindcss/cli": "latest",
     "tailwindcss": "latest"
+  },
+  "dependencies": {
+    "three": "^0.187.0"
   }
 }
